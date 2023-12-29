@@ -20,7 +20,6 @@ const CompanySchema = new mongoose.Schema({
     },
     linkedinURL: {
         type: String,
-        required: [true, 'LinkedIn URL can\'t be empty']
     },
     ratings: [
         {
@@ -34,12 +33,14 @@ const CompanySchema = new mongoose.Schema({
           ref: 'Country'
         }
       ],
-    groups: [
-        {
+    isActive: {
+      type: Boolean,
+      default: false
+    },
+    group:{
           type: Schema.Types.ObjectId,
           ref: 'Group'
-        }
-      ],
+        },
     createdAt:{
         type: Date,
         unique: true
