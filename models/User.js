@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcryptjs = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 require('dotenv').config();
 
@@ -55,8 +56,18 @@ UserSchema.pre('save', async function () {
     this.createdAt = new Date().toISOString();
 });
 
+UserSchema.methods.createJWT = function () {
+    return jwt.sign({ 'user_id': this._id, 
+                        'name': this.name, 
+                        'surname': this.surname, 
+                        'email':this.email, 
+                        'isActive': this.isActive,
+                        'isAdmin': this.isAdmin,
+                        'isAdmitted': this.isAdmitted }, process.env.JWT_SECRET);
+};
+
 UserSchema.methods.comparePassword = async function (pass) {
     return await bcryptjs.compare(pass, this.password);
-}
+};
 
 module.exports = mongoose.model("User", UserSchema);

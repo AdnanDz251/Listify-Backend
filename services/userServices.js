@@ -1,4 +1,5 @@
 const User = require('../models/User.js');
+const addFunct = require('../middleware/additionalFunct.js');
 
 async function register (req, res){
     try{
@@ -7,7 +8,11 @@ async function register (req, res){
             if (user) {
                 return res.status(400).json({ error: 'Email Already Exists' });
             }
-    
+
+            if (await addFunct.isPasswordPwned(req.body.password) > 0) {
+                return res.status(400).json({ error: 'Password has been Pwned' });
+            } else {
+      
                 let registeredUser = await User.create({
                 email: req.body.email,
                 name: req.body.name,
@@ -15,15 +20,17 @@ async function register (req, res){
                 password: req.body.password,
                 });
                 
+                const token = registeredUser.createJWT();
 
-                res.status(200).json( registeredUser );
-            }  
+                res.status(200).json( token );
+            }
+        }  
         else{
             res.status(400).json({ error: 'Passwords Do Not Match' });
         }
     }
-    catch(e){
-        res.status(500).json({error: "Error Registering User"});
+    catch(error){
+        res.status(500).json({error:"Error Registering User"});
     }
 };
   
@@ -46,16 +53,11 @@ async function login(req, res) {
             return res.status(401).json({ error: 'Incorrect password' });
         }
         
-        const sanitizedUser = {
-            id: user._id,
-            name: user.name,
-            surname: user.surname,
-            email: user.email 
-        };
+        const token = user.createJWT();
     
-        res.status(200).json({sanitizedUser});
+        res.status(200).json({token});
     } catch (error) {
-        res.status(500).json({ error: "Failed to Log In" });
+        res.status(500).json({error:"Failed to Log In"});
     }
 };
   
