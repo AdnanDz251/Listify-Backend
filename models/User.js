@@ -1,8 +1,10 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
-const bcryptjs = require('bcryptjs');
+import mongoose, {Schema} from 'mongoose';
+import validator from 'validator';
+import bcryptjs from 'bcryptjs';
+import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 
-require('dotenv').config();
+dotenv.config();
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -18,7 +20,7 @@ const UserSchema = new mongoose.Schema({
         required: true,
         validate: {
             validator: validator.isEmail,
-            message: 'Valid email required'
+            message: 'Email Not Valid'
         },
         unique: true 
     },
@@ -27,9 +29,13 @@ const UserSchema = new mongoose.Schema({
         required: [true, 'Password can\'t be empty'],
         validate: {
             validator: validator.isStrongPassword,
-            message: 'Valid password'
+            message: 'Password Not Valid'
         },
         select: false
+    },
+    company: {
+        type: Schema.Types.ObjectId,
+        ref: 'Company'
     },
     isActive: {
         type: Boolean,
@@ -55,8 +61,18 @@ UserSchema.pre('save', async function () {
     this.createdAt = new Date().toISOString();
 });
 
+UserSchema.methods.createJWT = function () {
+    return jwt.sign({ 'user_id': this._id, 
+                        'name': this.name, 
+                        'surname': this.surname, 
+                        'email':this.email, 
+                        'isActive': this.isActive,
+                        'isAdmin': this.isAdmin,
+                        'isAdmitted': this.isAdmitted }, process.env.JWT_SECRET);
+};
+
 UserSchema.methods.comparePassword = async function (pass) {
     return await bcryptjs.compare(pass, this.password);
 }
 
-module.exports = mongoose.model("User", UserSchema);
+export default mongoose.model("User", UserSchema);
