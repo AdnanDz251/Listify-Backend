@@ -1,9 +1,13 @@
-const mongoose = require('mongoose');
-require('dotenv').config();
+import mongoose from 'mongoose';
+import dotenv from "dotenv";
 
-mongoose.set('strictQuery', false);
+dotenv.config();
 
-mongoose.connect(process.env.DB_URI, {   
-})
-    .then(() => console.log("Connected to DB"))
-    .catch(console.error);
+export default function Connect() {
+    mongoose.set('strictQuery', false);
+
+    mongoose.connect(process.env.DB_URI, {   
+    })
+        .then(() => console.log("Connected to DB"))
+        .catch(console.error);
+}

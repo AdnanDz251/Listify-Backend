@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+import mongoose, {Schema} from 'mongoose';
+import dotenv from "dotenv";
 
-require('dotenv').config();
+dotenv.config();
 
 const ReviewSchema = new mongoose.Schema({
     userId:{
@@ -35,4 +36,4 @@ ReviewSchema.pre('save', async function () {
     this.createdAt = new Date().toISOString();
 });
 
-model.exports = mongoose.model("Review", ReviewSchema);
+export default mongoose.model("Review", ReviewSchema);
