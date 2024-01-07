@@ -23,12 +23,6 @@ const CompanySchema = new mongoose.Schema({
   linkedinURL: {
     type: String,
   },
-  ratings: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Review'
-    }
-  ],
   hq:{
     type: Schema.Types.ObjectId,
     ref: 'Country'
