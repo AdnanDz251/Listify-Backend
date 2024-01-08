@@ -8,6 +8,10 @@ const ReviewSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
+    companyId:{
+        type: Schema.Types.ObjectId,
+        ref: 'Company'
+    },
     text:{
         type: String,
         required: [true, 'Text can\'t be empty'],
