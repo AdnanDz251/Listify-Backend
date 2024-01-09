@@ -1,54 +1,50 @@
-const mongoose = require('mongoose');
+import mongoose, {Schema} from 'mongoose';
+import dotenv from "dotenv";
 
-require('dotenv').config();
+dotenv.config();
 
 const CompanySchema = new mongoose.Schema({
-    name:{
-        type: String,
-        required: [true, 'Name can\'t be empty']
-    },
-    decription:{
-        type: String,
-        required: [true, 'Text can\'t be empty']
-    },
-    logo: {
-        type: String,
-    },
-    websiteURL: {
-        type: String,
-        required: [true, 'Website URL can\'t be empty']
-    },
-    linkedinURL: {
-        type: String,
-    },
-    ratings: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'Review'
-        }
-      ],
-    countries: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'Country'
-        }
-      ],
-    isActive: {
-      type: Boolean,
-      default: false
-    },
-    group:{
-          type: Schema.Types.ObjectId,
-          ref: 'Group'
-        },
-    createdAt:{
-        type: Date,
-        unique: true
+  name:{
+    type: String,
+    required: [true, 'Name can\'t be empty']
+  },
+  description:{
+    type: String,
+    required: [true, 'Text can\'t be empty']
+  },
+  logo: {
+    type: String,
+    default: null,
+  },
+  websiteURL: {
+    type: String,
+    required: [true, 'Website URL can\'t be empty']
+  },
+  linkedinURL: {
+    type: String,
+  },
+  hq:{
+    type: Schema.Types.ObjectId,
+    ref: 'Country'
+  },
+  countries: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Country'
     }
+  ],
+  group:{
+    type: Schema.Types.ObjectId,
+    ref: 'Group'
+  },
+  createdAt:{
+    type: Date,
+    unique: true
+  }
 });
 
 CompanySchema.pre('save', async function () {
-    this.createdAt = new Date().toISOString();
+  this.createdAt = new Date().toISOString();
 });
 
-model.exports = mongoose.model("Company", CompanySchema);
+export default mongoose.model("Company", CompanySchema);

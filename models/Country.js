@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+import mongoose, {Schema} from 'mongoose';
+import dotenv from "dotenv";
 
-require('dotenv').config();
+dotenv.config();
 
 const CountrySchema = new mongoose.Schema({
     name:{
@@ -12,4 +13,4 @@ const CountrySchema = new mongoose.Schema({
     }
 });
 
-model.exports = mongoose.model("Country", CountrySchema);
+export default mongoose.model("Country", CountrySchema);

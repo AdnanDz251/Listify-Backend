@@ -1,36 +1,32 @@
-const User = require('../models/User.js');
-const addFunct = require('../middleware/additionalFunct.js');
+import User from '../models/User.js';
+import help from'../helper/getFromToken.js';
 
-async function register (req, res){
+async function register(req, res){
     try{
-        if(req.body.password === req.body.confirmPassword){
-            const user = await User.findOne({ email: req.body.email });
-            if (user) {
-                return res.status(400).json({ error: 'Email Already Exists' });
-            }
-
-            if (await addFunct.isPasswordPwned(req.body.password) > 0) {
-                return res.status(400).json({ error: 'Password has been Pwned' });
-            } else {
-      
-                let registeredUser = await User.create({
-                email: req.body.email,
-                name: req.body.name,
-                surname: req.body.surname,
-                password: req.body.password,
-                });
-                
-                const token = registeredUser.createJWT();
-
-                res.status(200).json( token );
-            }
-        }  
-        else{
-            res.status(400).json({ error: 'Passwords Do Not Match' });
+        if(req.body.password !== req.body.confirmPassword){
+            return res.status(400).json({ error: 'Passwords Do Not Match' });
         }
+
+        const user = await User.findOne({ email: req.body.email });
+        
+        if (user) {
+            return res.status(400).json({ error: 'Email Already Exists' });
+        }
+
+        let registeredUser = await User.create({
+        email: req.body.email,
+        name: req.body.name,
+        surname: req.body.surname,
+        password: req.body.password,
+        });
+            
+        const token = registeredUser.createJWT();
+
+        return res.status(200).json(token);
     }
     catch(error){
-        res.status(500).json({error:"Error Registering User"});
+        console.log(error)
+       return res.status(500).json({error: error});
     }
 };
   
@@ -49,20 +45,135 @@ async function login(req, res) {
         }
     
         const passwordMatches = await user.comparePassword(password);
+
         if (!passwordMatches) {
             return res.status(401).json({ error: 'Incorrect password' });
         }
         
         const token = user.createJWT();
-    
-        res.status(200).json({token});
+
+        return res.status(200).json({token});
     } catch (error) {
-        res.status(500).json({error:"Failed to Log In"});
+        return res.status(500).json({error:"Failed to Log In"});
     }
 };
   
-  
-module.exports = {
-    register: register,
-    login: login,
+async function getAll(req, res){
+    try {
+        const users = await User.find().lean();
+        
+        return res.status(200).json(users);
+    } catch (error) {
+        return res.status(500).json({error: 'Error Getting All Users'})
+    }
+};
+
+async function getByName(req, res){
+    try {
+        const users = await User.find({name: req.params.name });
+
+        return res.status(200).json(users);
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant Get Users' });
+    }
+};
+
+async function getByEmail(req, res){
+    try {
+        const users = await User.find({email: req.params.email });
+
+        return res.status(200).json(users);
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant Get Users' });
+    }
+};
+
+async function getById(req, res) {
+    try {
+        const users = await User.findOne({_id: req.params.id });
+
+        return res.status(200).json(users);
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant Get Users' });
+    }
+};
+
+async function getByIsActive(req, res) {
+    try {
+        const users = await User.find({isActive: req.params.isActive});
+
+        return res.status(200).json(users);
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant Get Users' });
+    }
+};
+
+async function joinCompany(req, res){
+    try {        
+        const userId = await help.getId(req);
+
+        await User.findByIdAndUpdate(
+            userId,
+            {company : req.params.id}
+        );
+
+        return res.status(200).json({message: "Succesfuly Joined Company"});
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant Add User To Company' });
+    }
+};
+
+async function getAdmitted(req, res) {
+    try {
+        const users = await User.find({isAdmitted: false});
+
+        return res.status(200).json(users);
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant Get Users' });
+    }
+};
+
+async function update(req, res){
+    try {
+        const userId = await help.getId(req);
+
+        const updateUser = await User.findOneAndUpdate(
+            { _id: userId},
+            req.body,
+            { new: true }
+        );
+   
+        const token = updateUser.createJWT();
+
+        return res.status(200).json(token);
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant Update User' });
+    }
+};
+
+async function deactivate(req, res) {
+    try {
+        await User.updateOne(
+            { _id: req.body.id }, 
+            { $set: { isAdmitted: req.body.isAdmitted } } 
+        );
+
+        return res.status(200).json({message: "User Deactivated Succesfuly"});
+    } catch (error) {
+        return res.status(500).json({ error: 'Error Deactivating User' });
+    }
+};
+
+export default {
+    register,
+    login,
+    getAll,
+    getByName,
+    getByEmail,
+    getById,
+    getByIsActive,
+    getAdmitted,
+    update,
+    deactivate,
+    joinCompany
 };
