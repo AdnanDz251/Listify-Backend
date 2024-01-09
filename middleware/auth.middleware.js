@@ -5,8 +5,14 @@ dotenv.config();;
 
 function verifyUserToken(req, res, next) {
   const authHeader = req.headers['authorization'];
+
+  const nonAuthEndpoints = ['/api/users/login', '/api/users/register'];
+
   if (!authHeader) {
-      return res.status(401).json({ error: "Missing Authorization" });
+    if (nonAuthEndpoints.includes(req.path)) {
+      return next();
+    }
+    return res.status(401).json({ error: "Missing Authorization" });
   }
 
   const token = authHeader && authHeader.split(' ')[1];
