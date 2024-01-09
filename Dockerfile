@@ -18,6 +18,7 @@ EXPOSE 5000
 
 # Define environment variables
 ENV DB_URI = "mongodb+srv://adnandzindo1507:VffPpplYzi4fGBlz@listifycluster.wtscpza.mongodb.net/?retryWrites=true&w=majority"
+ENV JWT_SECRET = "someSecretText12346"
 
 # Command to run your application
 CMD ["node", "index.js"]
