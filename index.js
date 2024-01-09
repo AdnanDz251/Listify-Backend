@@ -4,6 +4,7 @@ import companyRoutes from './routes/companyRoutes.js';
 import countryRoutes from './routes/countryRoutes.js';
 import groupRoutes from './routes/groupRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
+import authJWT from './middleware/auth.middleware.js';
 import cors from "cors";
 const app = express();
 import dotenv from "dotenv";

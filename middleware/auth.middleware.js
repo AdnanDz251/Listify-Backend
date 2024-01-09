@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();;
 
 function verifyUserToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
   if (!authHeader) {
       return res.status(401).json({ error: "Missing Authorization" });
   }
