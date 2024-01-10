@@ -7,6 +7,7 @@ import reviewRoutes from './routes/reviewRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import authJWT from './middleware/auth.middleware.js';
 import cors from "cors";
+import authJWT from './middleware/auth.middleware.js';
 const app = express();
 import dotenv from "dotenv";
 import connect from "./dbConnect.js"
