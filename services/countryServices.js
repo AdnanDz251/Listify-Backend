@@ -10,6 +10,18 @@ async function getAll(req, res){
     }
 };
 
+async function getByName(req, res){
+    try {
+        const regex = new RegExp(req.params.name, 'i');
+        const countries = await Country.find({name: { $regex: regex }});
+        
+        return res.status(200).json(countries);
+    } catch (error) {
+        return res.status(500).json({error: 'Error Getting All Countries'})
+    }
+};
+
 export default {
-    getAll
+    getAll,
+    getByName
 };

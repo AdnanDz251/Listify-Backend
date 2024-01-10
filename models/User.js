@@ -49,6 +49,10 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isBanned: {
+        type: Boolean,
+        default: false
+    },
     createdAt:{
         type: Date,
         unique: true
@@ -68,7 +72,12 @@ UserSchema.methods.createJWT = function () {
                         'email':this.email, 
                         'isActive': this.isActive,
                         'isAdmin': this.isAdmin,
-                        'isAdmitted': this.isAdmitted }, process.env.JWT_SECRET);
+                        'isAdmitted': this.isAdmitted,
+                        'company': this.company, 
+                        'isBanned': this.isBanned }, 
+                        process.env.JWT_SECRET,
+                        { expiresIn: '5h' }
+                    );
 };
 
 UserSchema.methods.comparePassword = async function (pass) {

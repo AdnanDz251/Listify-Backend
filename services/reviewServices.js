@@ -21,13 +21,22 @@ async function getById(req, res) {
     }
 };
 
+async function getByUserId(req, res){
+    try{
+        const review = await Review.find({userId: req.params.id });
+
+        return res.status(200).json(review);
+    } catch(error){
+        return res.status(500).json({ error: 'Cant Get Reviews' });
+    }
+}
+
 async function add(req, res) {
     try {
         await Review.create({
             userId: req.body.userId,
             companyId: req.body.companyId,
             text: req.body.text,
-            title: req.body.title,
             rating: req.body.rating,
         });
 
@@ -66,5 +75,6 @@ export default {
     getById,
     add,
     update,
-    delet
+    delet,
+    getByUserId
 };
