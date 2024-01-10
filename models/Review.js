@@ -18,12 +18,6 @@ const ReviewSchema = new mongoose.Schema({
         minlength: 10,
         maxlength: 1000,
     },
-    title: {
-        type: String,
-        required: [true, 'Title can\'t be empty'],
-        minlength: 10,
-        maxlength: 100,
-    },
     rating: {
         type: Number,
         required: [true, 'Title can\'t be empty'],

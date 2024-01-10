@@ -125,13 +125,50 @@ async function joinCompany(req, res){
 
 async function getAdmitted(req, res) {
     try {
-        const users = await User.find({isAdmitted: false});
+        const users = await User.find({isAdmitted: false, isBanned: false});
 
         return res.status(200).json(users);
     } catch (error) {
         return res.status(500).json({ error: 'Cant Get Users' });
     }
 };
+
+async function banUser(req, res){
+    try {
+
+        const updateUser = await User.findOneAndUpdate(
+            { _id: req.params.id},
+            { isAdmitted: false,
+                isBanned: true,
+                isAdmin: false},
+            { new: true }
+        );
+   
+        const token = updateUser.createJWT();
+
+        return res.status(200).json(token);
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant Ban User' });
+    }
+};
+
+async function promoteToAdmin(req, res){
+    try {
+
+        const updateUser = await User.findOneAndUpdate(
+            { _id: req.params.id},
+            { isAdmin: true},
+            { new: true }
+        );
+   
+        const token = updateUser.createJWT();
+
+        return res.status(200).json(token);
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant Update User' });
+    }
+};
+
 
 async function update(req, res){
     try {
@@ -175,5 +212,7 @@ export default {
     getAdmitted,
     update,
     deactivate,
-    joinCompany
+    joinCompany,
+    banUser,
+    promoteToAdmin
 };
