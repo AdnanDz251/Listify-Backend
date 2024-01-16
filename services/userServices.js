@@ -110,11 +110,10 @@ async function getByIsActive(req, res) {
 
 async function joinCompany(req, res){
     try {        
-        const userId = await help.getId(req);
 
         await User.findByIdAndUpdate(
-            userId,
-            {company : req.params.id}
+            {_id : req.body.user_id },
+            {company : req.body.company_id}
         );
 
         return res.status(200).json({message: "Succesfuly Joined Company"});

@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-
 const RequestSchema = new mongoose.Schema({
     userId:{
         type: Schema.Types.ObjectId,
@@ -19,10 +18,9 @@ const RequestSchema = new mongoose.Schema({
         minlength: 10,
         maxlength: 1000,
     },
-    status: {
+    type: {
         type: String,
-        enum: ['option1', 'option2'],
-        default: 'option1'
+        enum: ['CATEGORISATION', 'EMPLOYMENT']
     },
     createdAt:{
         type: Date,

@@ -15,6 +15,6 @@ router.patch("/update", services.update);
 router.patch("/deactivate", services.deactivate);
 router.patch("/promoteToAdmin/:id", services.promoteToAdmin);
 router.patch("/banUser/:id", services.banUser);
-router.patch("/joinCompany/:id", services.joinCompany);
+router.patch("/joinCompany", services.joinCompany);
 
 export default router;
