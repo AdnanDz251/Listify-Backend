@@ -34,8 +34,9 @@ const CompanySchema = new mongoose.Schema({
     }
   ],
   group:{
-    type: Schema.Types.ObjectId,
-    ref: 'Group'
+    type: String,
+    enum: ['HIRING','INTERVIEW','MAN IN THE MIDDLE', 'PARTNER'],
+    default: 'HIRING'
   },
   createdAt:{
     type: Date,

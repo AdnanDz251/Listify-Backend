@@ -10,6 +10,6 @@ router.get("/getById/:id", services.getById);
 router.get("/getByCountry/:country", services.getByCountry);
 router.get("/getByGroup/:group", services.getByGroup);
 router.patch("/update", services.update);
-router.delete("/delet/:id", services.delet);
+router.delete("/remove/:id", services.remove);
 
 export default router;

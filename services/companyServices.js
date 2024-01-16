@@ -80,7 +80,7 @@ async function update(req, res){
     }
 };
 
-async function delet(req, res, next) {
+async function remove(req, res, next) {
     try {
         await Company.findOneAndDelete({ _id: req.params.id });
 
@@ -113,5 +113,5 @@ export default {
     update,
     getByGroup,
     getByCountry,
-    delet
+    remove
 };

@@ -77,7 +77,7 @@ async function update(req, res){
     }
 };
 
-async function delet(req, res) {
+async function remove(req, res) {
     try {
         await Category.findOneAndDelete({ _id: req.params.id });
 
@@ -93,6 +93,6 @@ export default {
     getByUserId,
     addCategoryToUser,
     add,
-    delet,
+    remove,
     update
 };

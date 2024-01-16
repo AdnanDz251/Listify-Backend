@@ -2,7 +2,6 @@ import express from "express";
 import userRoutes from './routes/userRoutes.js';
 import companyRoutes from './routes/companyRoutes.js';
 import countryRoutes from './routes/countryRoutes.js';
-import groupRoutes from './routes/groupRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import authJWT from './middleware/auth.middleware.js';
@@ -27,7 +26,6 @@ connect();
 app.use("/api/users", userRoutes);
 app.use("/api/company", companyRoutes);
 app.use("/api/country", countryRoutes);
-app.use("/api/group", groupRoutes);
 app.use("/api/review", reviewRoutes);
 app.use("/api/category", categoryRoutes);
 

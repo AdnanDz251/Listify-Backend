@@ -60,7 +60,7 @@ async function update(req, res){
     }
 };
 
-async function delet(req, res) {
+async function remove(req, res) {
     try {
         await Review.findOneAndDelete({ _id: req.params.id });
 
@@ -75,6 +75,6 @@ export default {
     getById,
     add,
     update,
-    delet,
+    remove,
     getByUserId
 };
