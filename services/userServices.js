@@ -205,8 +205,6 @@ async function deactivate(req, res) {
     }
 };
 
-
-
 export default {
     register,
     login,

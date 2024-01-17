@@ -1,14 +1,12 @@
 import Company from '../models/Company.js';
 import User from '../models/User.js';
-import Category from '../models/Category.js';
-import Country from '../models/Country.js';
 
 async function getAll(req, res){
     try {
         const companies = await Company.find()
-                                .populate({path: 'countries', select: 'name -_id'})
-                                .populate({path: 'categories', select: 'name -_id' })
-                                .populate({path: 'hq', select: 'name -_id' });
+                                .populate({path: 'countries', select: 'name '})
+                                .populate({path: 'categories', select: 'name' })
+                                .populate({path: 'hq', select: 'name' });
 
         return res.status(200).json(companies);
     } catch (error) {
@@ -20,9 +18,9 @@ async function getByName(req, res){
     try {
         const regex = new RegExp(req.params.name, 'i');
         const company = await Company.find({name: { $regex: regex }})
-                                .populate({path: 'countries', select: 'name -_id'})
-                                .populate({path: 'categories', select: 'name -_id' })
-                                .populate({path: 'hq', select: 'name -_id' });
+                                .populate({path: 'countries', select: 'name'})
+                                .populate({path: 'categories', select: 'name' })
+                                .populate({path: 'hq', select: 'name' });
 
         return res.status(200).json(company);
     } catch (error) {
@@ -33,9 +31,9 @@ async function getByName(req, res){
 async function getByGroup(req, res){
     try {
         const company = await Company.find({group: req.params.group })
-                            .populate({path: 'countries', select: 'name -_id'})
-                            .populate({path: 'categories', select: 'name -_id' })
-                            .populate({path: 'hq', select: 'name -_id' });
+                            .populate({path: 'countries', select: 'name'})
+                            .populate({path: 'categories', select: 'name' })
+                            .populate({path: 'hq', select: 'name' });
 
         return res.status(200).json(company);
     } catch (error) {
@@ -46,9 +44,9 @@ async function getByGroup(req, res){
 async function getById(req, res) {
     try {
         const company = await Company.findOne({_id: req.params.id })
-                            .populate({path: 'countries', select: 'name -_id'})
-                            .populate({path: 'categories', select: 'name -_id' })
-                            .populate({path: 'hq', select: 'name -_id' });
+                            .populate({path: 'countries', select: 'name'})
+                            .populate({path: 'categories', select: 'name' })
+                            .populate({path: 'hq', select: 'name' });
 
         return res.status(200).json(company);
     } catch (error) {
@@ -112,9 +110,9 @@ async function remove(req, res, next) {
 async function getByCountry(req, res){
     try {
         const company = await Company.find({countries: req.params.country })
-                                .populate({path: 'countries', select: 'name -_id'})
-                                .populate({path: 'categories', select: 'name -_id' })
-                                .populate({path: 'hq', select: 'name -_id' });
+                                .populate({path: 'countries', select: 'name'})
+                                .populate({path: 'categories', select: 'name' })
+                                .populate({path: 'hq', select: 'name' });
 
         return res.status(200).json(company);
     } catch (error) {
