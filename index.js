@@ -34,9 +34,3 @@ app.use("/api/request", requestRoutes);
 app.listen(port, () =>{
   console.log(`Server is running on port: ${port}`);
 });
-
-setInterval(() => {
-  http.get(process.env.SERVER_URL, (res) => {
-    console.log(`Pinging server at ${new Date().toLocaleTimeString()}`);
-  });
-}, 180000);

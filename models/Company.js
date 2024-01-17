@@ -41,7 +41,7 @@ const CompanySchema = new mongoose.Schema({
   ],
   group:{
     type: String,
-    enum: ['HIRING','INTERVIEW','MAN IN THE MIDDLE', 'PARTNER']
+    enum: ['HIRING','INTERVIEW','MITM', 'PARTNER']
   },
   createdAt:{
     type: Date,
