@@ -81,7 +81,8 @@ UserSchema.methods.createJWT = function () {
                         'isAdmitted': this.isAdmitted,
                         'company': this.company, 
                         'isBanned': this.isBanned }, 
-                        process.env.JWT_SECRET
+                        process.env.JWT_SECRET,
+                        { expiresIn: '4h' }
                     );
 };
 
