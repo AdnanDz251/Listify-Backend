@@ -12,7 +12,7 @@ async function getAll(req, res){
 
         return res.status(200).json(companies);
     } catch (error) {
-        return res.status(500).json({error: 'Error Getting All Companies'})
+        return res.status(500).json({error})
     }
 };
 
@@ -52,7 +52,7 @@ async function getById(req, res) {
 
         return res.status(200).json(company);
     } catch (error) {
-        return res.status(500).json({ error: 'Cant Get Company' });
+        return res.status(500).json({ error});
     }
 };
 
