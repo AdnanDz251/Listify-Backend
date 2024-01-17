@@ -130,7 +130,7 @@ async function joinCompany(req, res){
 async function getAdmitted(req, res) {
     try {
         const users = await User.find({isAdmitted: false, isBanned: false})
-                            .populate({path: 'categories', select: 'name -_id' });
+                            .populate({path: 'categories', select: 'name' });
 
         return res.status(200).json(users);
     } catch (error) {
