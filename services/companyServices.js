@@ -18,7 +18,8 @@ async function getAll(req, res){
 
 async function getByName(req, res){
     try {
-        const company = await Company.find({name: { $regex: new RegExp(req.body.name, 'i') } })
+        const regex = new RegExp(req.params.name, 'i');
+        const company = await Company.find({name: { $regex: regex }})
                                 .populate({path: 'countries', select: 'name -_id'})
                                 .populate({path: 'categories', select: 'name -_id' })
                                 .populate({path: 'hq', select: 'name -_id' });
