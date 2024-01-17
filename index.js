@@ -4,6 +4,7 @@ import companyRoutes from './routes/companyRoutes.js';
 import countryRoutes from './routes/countryRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
+import requestRoutes from "./routes/requestRoutes.js";
 import authJWT from './middleware/auth.middleware.js';
 import cors from "cors";
 const app = express();
@@ -27,6 +28,7 @@ app.use("/api/company", companyRoutes);
 app.use("/api/country", countryRoutes);
 app.use("/api/review", reviewRoutes);
 app.use("/api/category", categoryRoutes);
+app.use("/api/request", requestRoutes);
 
 app.listen(port, () =>{
   console.log(`Server is running on port: ${port}`);

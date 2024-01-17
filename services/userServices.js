@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import help from'../helper/getFromToken.js';
+import Category from '../models/Category.js';
 
 async function register(req, res){
     try{
@@ -60,7 +61,8 @@ async function login(req, res) {
   
 async function getAll(req, res){
     try {
-        const users = await User.find().lean();
+        const users = await User.find()
+                        .populate({path: 'categories', select: 'name -_id' });
         
         return res.status(200).json(users);
     } catch (error) {
@@ -70,8 +72,8 @@ async function getAll(req, res){
 
 async function getByName(req, res){
     try {
-        const users = await User.find({name: req.params.name });
-
+        const users = await User.find({name: req.params.name })
+                        .populate({path: 'categories', select: 'name -_id' });
         return res.status(200).json(users);
     } catch (error) {
         return res.status(500).json({ error: 'Cant Get Users' });
@@ -80,7 +82,8 @@ async function getByName(req, res){
 
 async function getByEmail(req, res){
     try {
-        const users = await User.find({email: req.params.email });
+        const users = await User.find({email: req.params.email })
+                            .populate({path: 'categories', select: 'name -_id' });
 
         return res.status(200).json(users);
     } catch (error) {
@@ -90,7 +93,8 @@ async function getByEmail(req, res){
 
 async function getById(req, res) {
     try {
-        const users = await User.findOne({_id: req.params.id });
+        const users = await User.findOne({_id: req.params.id })
+                            .populate({path: 'categories', select: 'name -_id' });
 
         return res.status(200).json(users);
     } catch (error) {
@@ -100,7 +104,8 @@ async function getById(req, res) {
 
 async function getByIsActive(req, res) {
     try {
-        const users = await User.find({isActive: req.params.isActive});
+        const users = await User.find({isActive: req.params.isActive})
+                            .populate({path: 'categories', select: 'name -_id' });;
 
         return res.status(200).json(users);
     } catch (error) {
@@ -124,7 +129,8 @@ async function joinCompany(req, res){
 
 async function getAdmitted(req, res) {
     try {
-        const users = await User.find({isAdmitted: false, isBanned: false});
+        const users = await User.find({isAdmitted: false, isBanned: false})
+                            .populate({path: 'categories', select: 'name -_id' });
 
         return res.status(200).json(users);
     } catch (error) {
@@ -168,7 +174,6 @@ async function promoteToAdmin(req, res){
     }
 };
 
-
 async function update(req, res){
     try {
         const userId = await help.getId(req);
@@ -199,6 +204,8 @@ async function deactivate(req, res) {
         return res.status(500).json({ error: 'Error Deactivating User' });
     }
 };
+
+
 
 export default {
     register,

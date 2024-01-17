@@ -33,10 +33,15 @@ const CompanySchema = new mongoose.Schema({
       ref: 'Country'
     }
   ],
+  categories: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Category'
+    }
+  ],
   group:{
     type: String,
-    enum: ['HIRING','INTERVIEW','MAN IN THE MIDDLE', 'PARTNER'],
-    default: 'HIRING'
+    enum: ['HIRING','INTERVIEW','MAN IN THE MIDDLE', 'PARTNER']
   },
   createdAt:{
     type: Date,

@@ -37,6 +37,12 @@ const UserSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Company'
     },
+    categories: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Category'
+        }
+    ],
     isActive: {
         type: Boolean,
         default: false

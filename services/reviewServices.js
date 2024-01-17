@@ -1,4 +1,3 @@
-import Company from '../models/Company.js';
 import Review from '../models/Review.js';
 
 async function getByCompany(req, res){
