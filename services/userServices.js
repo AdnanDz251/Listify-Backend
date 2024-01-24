@@ -1,6 +1,9 @@
 import User from '../models/User.js';
 import help from'../helper/getFromToken.js';
-import Category from '../models/Category.js';
+import mailer from 'nodemailer';
+import generatePassword from 'generate-password';
+import ejs from 'ejs';
+
 
 async function register(req, res){
     try{
@@ -30,6 +33,7 @@ async function register(req, res){
        return res.status(500).json({error: error});
     }
 };
+
   
 async function login(req, res) {
     try {
@@ -59,10 +63,15 @@ async function login(req, res) {
     }
 };
   
+
 async function getAll(req, res){
     try {
         const users = await User.find()
-                        .populate({path: 'categories', select: 'name -_id' });
+                        .populate({path: 'categories', select: 'name' });
+
+        if(!users){
+            return res.status(404).json({ error: 'Cant Find Users' });
+        }
         
         return res.status(200).json(users);
     } catch (error) {
@@ -70,48 +79,70 @@ async function getAll(req, res){
     }
 };
 
+
 async function getByName(req, res){
     try {
         const users = await User.find({name: req.params.name })
-                        .populate({path: 'categories', select: 'name -_id' });
+                        .populate({path: 'categories', select: 'name' });
+
+        if(!users){
+            return res.status(404).json({ error: 'Cant Find Users' });
+        }
+
         return res.status(200).json(users);
     } catch (error) {
         return res.status(500).json({ error: 'Cant Get Users' });
     }
 };
+
 
 async function getByEmail(req, res){
     try {
         const users = await User.find({email: req.params.email })
                             .populate({path: 'categories', select: 'name -_id' });
 
+        if(!users){
+            return res.status(404).json({ error: 'Cant Find Users' });
+        }
+
         return res.status(200).json(users);
     } catch (error) {
         return res.status(500).json({ error: 'Cant Get Users' });
     }
 };
+
 
 async function getById(req, res) {
     try {
         const users = await User.findOne({_id: req.params.id })
-                            .populate({path: 'categories', select: 'name -_id' });
+                            .populate({path: 'categories', select: 'name' });
+        
+        if(!users){
+            return res.status(404).json({ error: 'Cant Find Users' });
+        }
 
         return res.status(200).json(users);
     } catch (error) {
         return res.status(500).json({ error: 'Cant Get Users' });
     }
 };
+
 
 async function getByIsActive(req, res) {
     try {
         const users = await User.find({isActive: req.params.isActive})
-                            .populate({path: 'categories', select: 'name -_id' });;
+                            .populate({path: 'categories', select: 'name' });
+
+        if(!users){
+            return res.status(404).json({ error: 'Cant Find Users' });
+        }
 
         return res.status(200).json(users);
     } catch (error) {
         return res.status(500).json({ error: 'Cant Get Users' });
     }
 };
+
 
 async function joinCompany(req, res){
     try {        
@@ -127,6 +158,7 @@ async function joinCompany(req, res){
     }
 };
 
+
 async function getAdmitted(req, res) {
     try {
         const users = await User.find({isAdmitted: false, isBanned: false})
@@ -138,8 +170,10 @@ async function getAdmitted(req, res) {
     }
 };
 
+
 async function banUser(req, res){
     try {
+        
 
         const updateUser = await User.findOneAndUpdate(
             { _id: req.params.id},
@@ -157,6 +191,7 @@ async function banUser(req, res){
     }
 };
 
+
 async function promoteToAdmin(req, res){
     try {
 
@@ -173,6 +208,7 @@ async function promoteToAdmin(req, res){
         return res.status(500).json({ error: 'Cant Update User' });
     }
 };
+
 
 async function update(req, res){
     try {
@@ -205,6 +241,152 @@ async function deactivate(req, res) {
     }
 };
 
+
+async function sendAcceptanceMail(req, res){
+    try{
+        const user = await User.findOne({email: req.params.email})
+
+        if(!user){
+            return res.status(404).json({ message: 'User Not Found' });
+        }
+
+        const transporter = mailer.createTransport({
+            host: "mail.skim.ba",
+            port: 465,
+            secure: true,
+            auth: {
+              user: process.env.MAILER_EMAIL,
+              pass: process.env.MAILER_PASSWORD,
+            },
+        });
+
+        const link = process.env.MAIL_URL
+        const user_id = user._id;
+
+        const mailOptions = {
+            from: process.env.MAILER_EMAIL,
+            to: req.params.email,
+            subject: "[LISTIFY] Password Recovery Confirmation",
+            html: ` <head>
+                        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Email template with CTA</title>
+                        <!--[if mso]><style type="text/css">body, table, td, a { font-family: Arial, Helvetica, sans-serif !important; }</style><![endif]-->
+                    </head>
+                    
+                    <body style="font-family: Helvetica, Arial, sans-serif; margin: 0px; padding: 0px; background-color: #ffffff;">
+                        <table role="presentation"
+                        style="width: 100%; border-collapse: collapse; border: 0px; border-spacing: 0px; font-family: Arial, Helvetica, sans-serif; background-color: rgb(239, 239, 239);">
+                        <tbody>
+                            <tr>
+                            <td align="center" style="padding: 1rem 2rem; vertical-align: top; width: 100%;">
+                                <table role="presentation" style="max-width: 600px; border-collapse: collapse; border: 0px; border-spacing: 0px; text-align: left;">
+                                <tbody>
+                                    <tr>
+                                    <td style="padding: 40px 0px 0px;">
+                                        <div style="text-align: center;">
+                                        <div style="padding-bottom: 20px;"><img src="https://i.imgur.com/ebLznEN.png" alt="Listify" style="width: 168px;"></div>
+                                        </div>
+                                        <div style="padding: 20px; background-color: rgb(255, 255, 255);">
+                                        <div style="color: rgb(0, 0, 0); text-align: left;">
+                                            <p style="padding-bottom: 16px">Hello,</p>
+                                            <p style="padding-bottom: 16px">We received a request to reset your password. If you didn't make this request, you can
+                                            ignore this email. To reset your password, click the button below: </p>
+                                            <p style="padding-bottom: 16px"><a href="${link}/${user_id}" target="_blank"
+                                                style="padding: 12px 24px; border-radius: 4px; color: #FFF; background: #2B52F5;display: inline-block;margin: 0.5rem 0;">Retrieve
+                                                Password</a></p>
+                                            <p style="padding-bottom: 16px"><span
+                                                style="color: #FF0000">Please Press the Button Only Once</span></p>
+                                            <p style="padding-bottom: 16px">Best regards,<br><span style="color: #999">SKIM Team</span></p>
+                                        </div>
+                                        </div>
+                                        <div style="padding-top: 20px; color: rgb(153, 153, 153); text-align: center;"></div>
+                                    </td>
+                                    </tr>
+                                </tbody>
+                                </table>
+                            </td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </body>`,
+        };
+    
+        await transporter.sendMail(mailOptions);
+        res.status(200).json({ message: 'Email Sent Successfully' });
+    }
+    catch(error){
+        console.log(error);
+        return res.status(500).json({ message: 'Email Cant be Sent' });
+    }
+};
+
+
+async function sendChangeMail(req, res){
+    try{
+        const user = await User.findOne({_id: req.params.user_id});
+
+        if(!user){
+            return res.status(404).json({ message: 'User Not Found' });
+        }
+
+        const newPassword = generatePassword.generate({
+            length: 12,
+            numbers: true,
+            symbols: true,
+            uppercase: true,
+            lowercase: true,
+        });
+
+        await User.updatePassword(req.params.user_id, newPassword);
+
+        const transporter = mailer.createTransport({
+            host: "mail.skim.ba",
+            port: 465,
+            secure: true,
+            auth: {
+              user: process.env.MAILER_EMAIL,
+              pass: process.env.MAILER_PASSWORD,
+            },
+        });
+
+        const mailOptions = {
+            from: process.env.MAILER_EMAIL,
+            to: user.email,
+            subject: "[LISTIFY] New Password",
+            html: await ejs.renderFile(process.cwd() + '\\views\\emailTemplate.ejs', { newPassword }),
+        };
+
+        await transporter.sendMail(mailOptions);
+        return res.status(200);
+    }
+    catch(error){
+        return res.status(500).json({ error });
+    }
+};
+
+
+async function approveNewUser(req, res){
+    try{
+        const user = await User.findOne({_id : req.params.user_id});
+
+        if(!user){
+            return res.status(404).json({message: "User Not Found"});
+        }
+
+        await User.updateOne(
+                { _id: req.params.user_id},
+                {isAdmitted : true},
+                { new: true });
+
+        return res.status(200).json({message: "User Approved"});
+    }
+    catch(error){
+        return res.status(500).json({message : "Problem Approving Users"});
+    }
+};
+
+
 export default {
     register,
     login,
@@ -218,5 +400,8 @@ export default {
     deactivate,
     joinCompany,
     banUser,
-    promoteToAdmin
+    promoteToAdmin,
+    sendAcceptanceMail,
+    sendChangeMail,
+    approveNewUser
 };

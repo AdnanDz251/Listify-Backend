@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-function verifyUserToken(req, res, next) {
+function verifyAdmin(req, res, next) {
   const authHeader = req.headers['authorization'];
 
   if (!authHeader) {
@@ -14,7 +14,10 @@ function verifyUserToken(req, res, next) {
   
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user_id = decoded.user_id;
+
+    if(!decoded.isAdmin){
+        return res.status(400).json({error: "Not an Admin"})
+    }
     next();
     
   } catch (error) {
@@ -26,5 +29,5 @@ function verifyUserToken(req, res, next) {
 };
 
 export default {
-  verifyUserToken
+    verifyAdmin
 };

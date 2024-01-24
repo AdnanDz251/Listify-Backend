@@ -71,6 +71,13 @@ UserSchema.pre('save', async function () {
     this.createdAt = new Date().toISOString();
 });
 
+UserSchema.statics.updatePassword = async function(user_id, newPassword) {
+    const salt = await bcryptjs.genSalt(10);
+    const hashedPassword = await bcryptjs.hash(newPassword, salt);
+
+    return this.updateOne({ _id: user_id }, { password: hashedPassword });
+};
+
 UserSchema.methods.createJWT = function () {
     return jwt.sign({ 'user_id': this._id, 
                         'name': this.name, 

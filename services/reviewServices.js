@@ -3,7 +3,7 @@ import Review from '../models/Review.js';
 async function getByCompany(req, res){
     try {
         const reviews = await Review.find({companyId: req.params.company})
-
+        
         return res.status(200).json(reviews);
     } catch (error) {
         return res.status(500).json({ error: 'Cant Get Review' });
