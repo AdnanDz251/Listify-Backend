@@ -6,7 +6,8 @@ dotenv.config();
 const CompanySchema = new mongoose.Schema({
   name:{
     type: String,
-    required: [true, 'Name can\'t be empty']
+    required: [true, 'Name can\'t be empty'],
+    unique: true
   },
   description:{
     type: String,
