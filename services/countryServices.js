@@ -21,7 +21,18 @@ async function getByName(req, res){
     }
 };
 
+async function getById(req, res){
+    try {
+        const countries = await Country.find({_id: req.params.id});
+        
+        return res.status(200).json(countries);
+    } catch (error) {
+        return res.status(500).json({error: 'Error Getting All Countries'})
+    }
+};
+
 export default {
     getAll,
-    getByName
+    getByName,
+    getById
 };

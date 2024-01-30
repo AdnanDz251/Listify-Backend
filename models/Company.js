@@ -6,7 +6,8 @@ dotenv.config();
 const CompanySchema = new mongoose.Schema({
   name:{
     type: String,
-    required: [true, 'Name can\'t be empty']
+    required: [true, 'Name can\'t be empty'],
+    unique: true
   },
   description:{
     type: String,
@@ -33,9 +34,15 @@ const CompanySchema = new mongoose.Schema({
       ref: 'Country'
     }
   ],
+  categories: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Category'
+    }
+  ],
   group:{
-    type: Schema.Types.ObjectId,
-    ref: 'Group'
+    type: String,
+    enum: ['HIRING','INTERVIEW','MITM', 'PARTNER']
   },
   createdAt:{
     type: Date,

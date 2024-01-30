@@ -15,6 +15,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    image:{
+        type: String,
+        default: null,
+    },
     email:{
         type: String,
         required: true,
@@ -37,6 +41,12 @@ const UserSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Company'
     },
+    categories: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Category'
+        }
+    ],
     isActive: {
         type: Boolean,
         default: false
@@ -65,6 +75,13 @@ UserSchema.pre('save', async function () {
     this.createdAt = new Date().toISOString();
 });
 
+UserSchema.statics.updatePassword = async function(user_id, newPassword) {
+    const salt = await bcryptjs.genSalt(10);
+    const hashedPassword = await bcryptjs.hash(newPassword, salt);
+
+    return this.updateOne({ _id: user_id }, { password: hashedPassword });
+};
+
 UserSchema.methods.createJWT = function () {
     return jwt.sign({ 'user_id': this._id, 
                         'name': this.name, 
@@ -75,7 +92,8 @@ UserSchema.methods.createJWT = function () {
                         'isAdmitted': this.isAdmitted,
                         'company': this.company, 
                         'isBanned': this.isBanned }, 
-                        process.env.JWT_SECRET
+                        process.env.JWT_SECRET,
+                        { expiresIn: '4h' }
                     );
 };
 

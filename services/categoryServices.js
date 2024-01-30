@@ -1,5 +1,4 @@
 import Category from '../models/Category.js';
-import help from'../helper/getFromToken.js';
 
 async function getAll(req, res){
     try {
@@ -37,32 +36,6 @@ async function getByName(req, res) {
     }
 };
 
-async function getByUserId(req, res) {
-    try {
-        const category = await Category.find({_id: req.params.id});
-
-        return res.status(201).json({category});
-    } catch (error) {
-        return res.status(500).json({ error: 'Problem Getting Categories' });
-    }
-};
-
-async function addCategoryToUser(req, res){
-    try {
-        const userId = await help.getId(req);
-
-        const updatedCategory = await Category.findByIdAndUpdate(
-            req.params.id,
-            { $addToSet: { user_id: userId } },
-            { new: true }
-          );
-        
-        return res.status(201).json({updatedCategory});
-    } catch (error) {
-        return res.status(500).json({ error: 'Problem Adding Categories to User' });
-    }
-};
-
 async function update(req, res){
     try {
         const updateCategory = await Category.findOneAndUpdate(
@@ -77,7 +50,7 @@ async function update(req, res){
     }
 };
 
-async function delet(req, res) {
+async function remove(req, res) {
     try {
         await Category.findOneAndDelete({ _id: req.params.id });
 
@@ -90,9 +63,7 @@ async function delet(req, res) {
 export default {
     getAll,
     getByName,
-    getByUserId,
-    addCategoryToUser,
     add,
-    delet,
+    remove,
     update
 };

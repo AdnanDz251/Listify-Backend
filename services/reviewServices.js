@@ -1,10 +1,9 @@
-import Company from '../models/Company.js';
 import Review from '../models/Review.js';
 
 async function getByCompany(req, res){
     try {
         const reviews = await Review.find({companyId: req.params.company})
-
+        
         return res.status(200).json(reviews);
     } catch (error) {
         return res.status(500).json({ error: 'Cant Get Review' });
@@ -33,6 +32,13 @@ async function getByUserId(req, res){
 
 async function add(req, res) {
     try {
+        const rev = await Review.find({userId: req.body.userId,
+                                    companyId: req.body.companyId,});
+
+        if(rev.length > 0){
+            return res.satus(400).json({message: "User Already Added Review"});
+        }
+
         await Review.create({
             userId: req.body.userId,
             companyId: req.body.companyId,
@@ -60,7 +66,7 @@ async function update(req, res){
     }
 };
 
-async function delet(req, res) {
+async function remove(req, res) {
     try {
         await Review.findOneAndDelete({ _id: req.params.id });
 
@@ -75,6 +81,6 @@ export default {
     getById,
     add,
     update,
-    delet,
+    remove,
     getByUserId
 };
