@@ -3,6 +3,8 @@ import help from'../helper/getFromToken.js';
 import mailer from 'nodemailer';
 import generatePassword from 'generate-password';
 import ejs from 'ejs';
+import axios from 'axios';
+import fs from 'fs';
 
 
 async function register(req, res){
@@ -228,6 +230,7 @@ async function update(req, res){
     }
 };
 
+
 async function deactivate(req, res) {
     try {
         await User.updateOne(
@@ -387,6 +390,43 @@ async function approveNewUser(req, res){
 };
 
 
+async function info(req, res){
+    return res.status(200).json({status: "Healthy"});
+};
+
+async function addUserImage(req, res){
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No image provided' });
+        }
+
+        const imageData = fs.readFileSync(req.file.path);
+
+        const base64ImageData = imageData.toString('base64');
+
+        const imgurResponse = await axios.post('https://api.imgur.com/3/image', {
+            image: base64ImageData,
+        }, {
+            headers: {
+                'Authorization': `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+            },
+        });
+
+        const userId = await help.getId(req);
+
+        await User.findOneAndUpdate({_id: userId},
+                                    {image: imgurResponse.data.data.link},
+                                    {new: true});
+
+        fs.unlinkSync(req.file.path);
+
+        return res.status(200).json({message: "Immage Added Succefuly"});
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({error: "Problem Adding Image"});
+    }
+};
+
 export default {
     register,
     login,
@@ -403,5 +443,7 @@ export default {
     promoteToAdmin,
     sendAcceptanceMail,
     sendChangeMail,
-    approveNewUser
+    approveNewUser,
+    info,
+    addUserImage
 };

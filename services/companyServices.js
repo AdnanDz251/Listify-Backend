@@ -1,5 +1,8 @@
 import Company from '../models/Company.js';
 import User from '../models/User.js';
+import Review from '../models/Review.js';
+import axios from 'axios';
+import fs from 'fs';
 
 async function getAll(req, res){
     try {
@@ -46,11 +49,23 @@ async function getById(req, res) {
         const company = await Company.findOne({_id: req.params.id })
                             .populate({path: 'countries', select: 'name'})
                             .populate({path: 'categories', select: 'name' })
-                            .populate({path: 'hq', select: 'name' });
+                            .populate({path: 'hq', select: 'name' })
+                            .lean();
+
+        const reviews = await Review.find({ companyId: req.params.id });
+
+        let totalRating = 0;
+
+        if (reviews.length > 0) {
+            totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+            totalRating = totalRating / reviews.length;
+        }
+        
+        company.avg = totalRating;
 
         return res.status(200).json(company);
     } catch (error) {
-        return res.status(500).json({ error});
+        return res.status(500).json(error);
     }
 };
 
@@ -120,6 +135,47 @@ async function getByCountry(req, res){
     }
 };
 
+async function getAllUsersInCompany(req, res){
+    try{
+        const users = await User.find({company : req.params.companyId});
+
+        return res.status(200).json(users);
+    } catch(error){
+        return res.status(500).json({error: "Cant Get Users"});
+    }
+};
+
+async function addImageToCompany(req, res){
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No image provided' });
+        }
+
+        const imageData = fs.readFileSync(req.file.path);
+
+        const base64ImageData = imageData.toString('base64');
+
+        const imgurResponse = await axios.post('https://api.imgur.com/3/image', {
+            image: base64ImageData,
+        }, {
+            headers: {
+                'Authorization': `Client-ID ${process.env.IMGUR_CLIENT_ID}`,
+            },
+        });
+
+        await Company.findOneAndUpdate({_id: req.params.companyId},
+                                    {logo: imgurResponse.data.data.link},
+                                    {new: true});
+        
+        fs.unlinkSync(req.file.path);
+
+        return res.status(200).json({message: "Immage Added Succefuly"});
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({error: "Problem Adding Image"});
+    }
+};
+
 export default {
     getAll,
     getByName,
@@ -128,5 +184,7 @@ export default {
     update,
     getByGroup,
     getByCountry,
-    remove
+    remove,
+    getAllUsersInCompany,
+    addImageToCompany
 };

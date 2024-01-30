@@ -32,6 +32,13 @@ async function getByUserId(req, res){
 
 async function add(req, res) {
     try {
+        const rev = await Review.find({userId: req.body.userId,
+                                    companyId: req.body.companyId,});
+
+        if(rev.length > 0){
+            return res.satus(400).json({message: "User Already Added Review"});
+        }
+
         await Review.create({
             userId: req.body.userId,
             companyId: req.body.companyId,
