@@ -357,7 +357,7 @@ async function sendChangeMail(req, res){
             from: process.env.MAILER_EMAIL,
             to: user.email,
             subject: "[LISTIFY] New Password",
-            html: await ejs.renderFile(process.cwd() + '\\views\\emailTemplate.ejs', { newPassword }),
+            html: await ejs.renderFile(process.cwd() + '/views/emailTemplate.ejs', { newPassword }),
         };
 
         await transporter.sendMail(mailOptions);
