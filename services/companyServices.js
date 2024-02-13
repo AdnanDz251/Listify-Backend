@@ -77,7 +77,7 @@ async function add(req, res) {
             return res.status(400).json({ error: 'Company Already Exists' });
         }
 
-        await Company.create({
+        const comp = await Company.create({
             name : req.body.name,
             description : req.body.description,
             logo : req.body.logo,
@@ -85,9 +85,10 @@ async function add(req, res) {
             linkedinURL : req.body.linkedinURL,
             hq : req.body.hq,
             countries : req.body.countries,
+            group: req.body.group
         });
 
-        return res.status(201).json({message: 'Company Added Succesfuly'});
+        return res.status(201).json({message: 'Company Added Succesfuly', company_id : comp._id});
     } catch (error) {
         return res.status(500).json({ error: 'Problem Adding Company' });
     }

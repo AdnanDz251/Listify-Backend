@@ -20,6 +20,8 @@ router.get("/getById/:id", authJWT.verifyUserToken, services.getById);
 router.get("/getAdmitted", authJWT.verifyUserToken, services.getAdmitted);
 router.patch("/update", authJWT.verifyUserToken, services.update);
 router.post("/addUserImage", authJWT.verifyUserToken, upload.single('image'), services.addUserImage);
+router.get("/refresh", authJWT.verifyUserToken, services.refresh);
+router.patch("/changePassword", authJWT.verifyUserToken, services.changePassword);
 
 //For Admin Only
 router.get("/getAll", authJWT.verifyUserToken, authAdmin.verifyAdmin, services.getAll);
