@@ -5,6 +5,8 @@ import generatePassword from 'generate-password';
 import ejs from 'ejs';
 import axios from 'axios';
 import fs from 'fs';
+import Request from '../models/Request.js';
+import Review from '../models/Review.js';
 
 
 async function register(req, res){
@@ -176,7 +178,6 @@ async function getAdmitted(req, res) {
 async function banUser(req, res){
     try {
         
-
         const updateUser = await User.findOneAndUpdate(
             { _id: req.params.id},
             { isAdmitted: false,
@@ -184,12 +185,36 @@ async function banUser(req, res){
                 isAdmin: false},
             { new: true }
         );
+
+        await Request.deleteMany({userId: req.params.id});
+        await Review.deleteMany({userId: req.params.id});
    
         const token = updateUser.createJWT();
 
         return res.status(200).json(token);
     } catch (error) {
         return res.status(500).json({ error: 'Cant Ban User' });
+    }
+};
+
+async function refresh(req, res){
+    try {
+        const user_id = await help.getId(req);
+        
+        const user = await User.findOne({_id : user_id});
+        
+        if(!user.isAdmitted){
+            const authHeader = req.headers['authorization'];
+            const tok = authHeader && authHeader.split(' ')[1];
+
+            return res.status(300).json(tok);
+        }
+
+        const token = user.createJWT();
+
+        return res.status(200).json(token);
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant Refresh User' });
     }
 };
 
@@ -427,6 +452,26 @@ async function addUserImage(req, res){
     }
 };
 
+async function changePassword(req, res){
+    try {
+        const userId = await help.getId(req);
+        
+        const user = await User.findOne({_id: userId}).select('+password');;
+
+        const passwordMatches = await user.comparePassword(req.body.oldPassword);
+        console.log(passwordMatches);
+        if (!passwordMatches) {
+            return res.status(401).json({ error: 'Incorrect password' });
+        }
+
+        await User.updatePassword(userId, req.body.newPassword);
+        
+        return res.status(200).json("Password Updated");
+    } catch (error) {
+        return res.status(500).json({message: "Problem updating password"})
+    }
+};
+
 export default {
     register,
     login,
@@ -445,5 +490,7 @@ export default {
     sendChangeMail,
     approveNewUser,
     info,
-    addUserImage
+    addUserImage,
+    refresh,
+    changePassword
 };
