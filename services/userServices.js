@@ -166,7 +166,7 @@ async function leaveCompany(req, res){
     try {        
 
         await User.findByIdAndUpdate(
-            {_id : req.body.userId },
+            {_id : req.params.userId },
             {company : null}
         );
 
