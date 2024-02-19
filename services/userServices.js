@@ -153,7 +153,10 @@ async function joinCompany(req, res){
 
         await User.findByIdAndUpdate(
             {_id : req.body.user_id },
-            {company : req.body.company_id}
+            {   
+                company : req.body.company_id,
+                joinedAt: new Date()
+            }
         );
 
         return res.status(200).json({message: "Succesfuly Joined Company"});
@@ -167,7 +170,10 @@ async function leaveCompany(req, res){
 
         await User.findByIdAndUpdate(
             {_id : req.params.userId },
-            {company : null}
+            {
+                company : null,
+                joinedAt : null,
+            }
         );
 
         return res.status(200).json({message: "Succesfuly Left Company"});
