@@ -162,6 +162,19 @@ async function joinCompany(req, res){
     }
 };
 
+async function leaveCompany(req, res){
+    try {        
+
+        await User.findByIdAndUpdate(
+            {_id : req.body.userId },
+            {company : null}
+        );
+
+        return res.status(200).json({message: "Succesfuly Left Company"});
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant Remove User From Company' });
+    }
+};
 
 async function getAdmitted(req, res) {
     try {
@@ -194,6 +207,23 @@ async function banUser(req, res){
         return res.status(200).json(token);
     } catch (error) {
         return res.status(500).json({ error: 'Cant Ban User' });
+    }
+};
+
+async function unBanUser(req, res){
+    try {
+        const updateUser = await User.findOneAndUpdate(
+            { _id: req.params.userId},
+            { isAdmitted: true,
+                isBanned: flase},
+            { new: true }
+        );
+
+        const token = updateUser.createJWT();
+
+        return res.status(200).json(token);
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant UnBan User' });
     }
 };
 
@@ -236,6 +266,15 @@ async function promoteToAdmin(req, res){
     }
 };
 
+async function disband(req, res){
+    try {
+        await User.deleteOne({_id : req.params.userId});
+
+        return res.status(200).json({message: "User Deleted Succesfuly"});
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant Delete User' });
+    }
+};
 
 async function update(req, res){
     try {
@@ -492,5 +531,8 @@ export default {
     info,
     addUserImage,
     refresh,
-    changePassword
+    changePassword,
+    disband,
+    unBanUser,
+    leaveCompany
 };

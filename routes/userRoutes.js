@@ -22,6 +22,10 @@ router.patch("/update", authJWT.verifyUserToken, services.update);
 router.post("/addUserImage", authJWT.verifyUserToken, upload.single('image'), services.addUserImage);
 router.get("/refresh", authJWT.verifyUserToken, services.refresh);
 router.patch("/changePassword", authJWT.verifyUserToken, services.changePassword);
+router.patch("/joinCompany", authJWT.verifyUserToken, services.joinCompany);
+router.patch("/disband/:userId", authJWT.verifyUserToken, services.disband);
+router.patch("/unBanUser/:userId", authJWT.verifyUserToken, services.unBanUser);
+router.patch("/leaveCompany/:userId", authJWT.verifyUserToken, services.leaveCompany);
 
 //For Admin Only
 router.get("/getAll", authJWT.verifyUserToken, authAdmin.verifyAdmin, services.getAll);
@@ -29,7 +33,6 @@ router.get("/getByIsActive/:isActive", authJWT.verifyUserToken, authAdmin.verify
 router.patch("/deactivate", authJWT.verifyUserToken, authAdmin.verifyAdmin, services.deactivate);
 router.patch("/promoteToAdmin/:id", authJWT.verifyUserToken, authAdmin.verifyAdmin, services.promoteToAdmin);
 router.patch("/banUser/:id", authJWT.verifyUserToken, authAdmin.verifyAdmin, services.banUser);
-router.patch("/joinCompany", authJWT.verifyUserToken, authAdmin.verifyAdmin, services.joinCompany);
 router.patch("/approveNewUser/:user_id", authJWT.verifyUserToken, authAdmin.verifyAdmin, services.approveNewUser);
 
 //For Pinging Perposes
