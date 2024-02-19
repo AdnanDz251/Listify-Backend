@@ -43,7 +43,7 @@ const UserSchema = new mongoose.Schema({
         ref: 'Company'
     },
     joinedAt: {
-        type: Timestamp,
+        type: Date,
         default: null
     },
     categories: [
