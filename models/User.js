@@ -3,6 +3,7 @@ import validator from 'validator';
 import bcryptjs from 'bcryptjs';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import { Timestamp } from 'mongodb';
 
 dotenv.config();
 
@@ -40,6 +41,10 @@ const UserSchema = new mongoose.Schema({
     company: {
         type: Schema.Types.ObjectId,
         ref: 'Company'
+    },
+    joinedAt: {
+        type: Timestamp,
+        default: null
     },
     categories: [
         {
@@ -91,7 +96,8 @@ UserSchema.methods.createJWT = function () {
                         'isAdmin': this.isAdmin,
                         'isAdmitted': this.isAdmitted,
                         'company': this.company, 
-                        'isBanned': this.isBanned }, 
+                        'isBanned': this.isBanned,
+                        'joinedAt': this.joinedAt }, 
                         process.env.JWT_SECRET,
                         { expiresIn: '4h' }
                     );
