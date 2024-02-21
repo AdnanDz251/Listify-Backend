@@ -221,7 +221,7 @@ async function unBanUser(req, res){
         const updateUser = await User.findOneAndUpdate(
             { _id: req.params.userId},
             { isAdmitted: true,
-                isBanned: flase},
+                isBanned: false},
             { new: true }
         );
 
@@ -261,6 +261,23 @@ async function promoteToAdmin(req, res){
         const updateUser = await User.findOneAndUpdate(
             { _id: req.params.id},
             { isAdmin: true},
+            { new: true }
+        );
+   
+        const token = updateUser.createJWT();
+
+        return res.status(200).json(token);
+    } catch (error) {
+        return res.status(500).json({ error: 'Cant Update User' });
+    }
+};
+
+async function demoteFromAdmin(req, res){
+    try {
+
+        const updateUser = await User.findOneAndUpdate(
+            { _id: req.params.id},
+            { isAdmin: flase},
             { new: true }
         );
    
@@ -540,5 +557,6 @@ export default {
     changePassword,
     disband,
     unBanUser,
-    leaveCompany
+    leaveCompany,
+    demoteFromAdmin
 };

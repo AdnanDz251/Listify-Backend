@@ -34,6 +34,7 @@ router.patch("/deactivate", authJWT.verifyUserToken, authAdmin.verifyAdmin, serv
 router.patch("/promoteToAdmin/:id", authJWT.verifyUserToken, authAdmin.verifyAdmin, services.promoteToAdmin);
 router.patch("/banUser/:id", authJWT.verifyUserToken, authAdmin.verifyAdmin, services.banUser);
 router.patch("/approveNewUser/:user_id", authJWT.verifyUserToken, authAdmin.verifyAdmin, services.approveNewUser);
+router.patch("/demoteFromAdmin/:id", authJWT.verifyUserToken, authAdmin.verifyAdmin, services.demoteFromAdmin);
 
 //For Pinging Perposes
 router.get("/info", services.info);
