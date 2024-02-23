@@ -277,7 +277,7 @@ async function demoteFromAdmin(req, res){
 
         const updateUser = await User.findOneAndUpdate(
             { _id: req.params.id},
-            { isAdmin: flase},
+            { isAdmin: false},
             { new: true }
         );
    
