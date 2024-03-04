@@ -85,7 +85,8 @@ async function add(req, res) {
             linkedinURL : req.body.linkedinURL,
             hq : req.body.hq,
             countries : req.body.countries,
-            group: req.body.group
+            group: req.body.group,
+            categories: req.body.categories
         });
 
         return res.status(201).json({message: 'Company Added Succesfuly', company_id : comp._id});
